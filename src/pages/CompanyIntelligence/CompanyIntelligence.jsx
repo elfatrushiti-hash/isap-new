@@ -8,6 +8,8 @@ import CompanyHealthCard from '../../components/company/CompanyHealthCard.jsx'
 import IntrumFitCard from '../../components/company/IntrumFitCard.jsx'
 import SwotGrid from '../../components/company/SwotGrid.jsx'
 import { buildCompanyWorkspace, getCompanyHealth } from '../../services/companyService.js'
+import { useIsapStore } from '../../context/IsapStore.jsx'
+import PublicSourcesPanel from '../../components/company/PublicSourcesPanel.jsx'
 import './CompanyIntelligence.css'
 
 function ListCard({ title, icon: Icon, items }) {
@@ -21,6 +23,7 @@ function ListCard({ title, icon: Icon, items }) {
 
 export default function CompanyIntelligence({ selectedMeeting, onNavigate }) {
   const [activeTab, setActiveTab] = useState('overview')
+  const { companySources = [], addCompanySource, deleteCompanySourceById, reanalyseCompanySource } = useIsapStore()
   const workspace = useMemo(() => buildCompanyWorkspace(selectedMeeting), [selectedMeeting])
   const health = useMemo(() => getCompanyHealth(workspace), [workspace])
 
@@ -36,6 +39,7 @@ export default function CompanyIntelligence({ selectedMeeting, onNavigate }) {
     if (activeTab === 'management') return <div className="company-grid three">{workspace.management.map((person) => <section className="company-card company-person-card" key={`${person.name}-${person.role}`}><span className="company-person-icon"><Users size={20}/></span><h3>{person.name}</h3><strong>{person.role}</strong><p>{person.relevance}</p></section>)}</div>
     if (activeTab === 'financials') return <div className="company-grid three">{workspace.financials.map((item) => <section className="company-card company-metric-card" key={item.label}><CircleDollarSign size={20}/><span>{item.label}</span><strong>{item.value}</strong><p>{item.note}</p></section>)}</div>
     if (activeTab === 'strategy') return <div className="company-stack"><ListCard title="Strategic Initiatives" icon={Route} items={workspace.strategicInitiatives}/><SwotGrid swot={workspace.swot}/></div>
+    if (activeTab === 'sources') return <PublicSourcesPanel companyId={workspace.companyId} sources={companySources} onAdd={addCompanySource} onDelete={deleteCompanySourceById} onReanalyse={reanalyseCompanySource}/>
     if (activeTab === 'news') return <div className="company-news-list">{workspace.news.map((item) => <article className="company-card company-news-card" key={`${item.date}-${item.title}`}><div className="company-news-date"><CalendarClock size={17}/>{item.date}</div><div><span>{item.category}</span><h3>{item.title}</h3><p>{item.summary}</p></div></article>)}</div>
     if (activeTab === 'opportunities') return <div className="company-grid two"><IntrumFitCard items={workspace.intrumFit}/><ListCard title="Meeting Opportunities" icon={BriefcaseBusiness} items={workspace.opportunities}/><ListCard title="Known Pain Points" icon={Lightbulb} items={workspace.painPoints.length ? workspace.painPoints : ['Validate pain points in discovery']}/><ListCard title="Risks" icon={Newspaper} items={workspace.risks.length ? workspace.risks : ['No material risk recorded yet']}/></div>
     if (activeTab === 'insights') return <div className="company-grid two"><ListCard title="Prioritized Discovery Questions" icon={Lightbulb} items={workspace.discoveryQuestions}/><IntrumFitCard items={workspace.intrumFit}/></div>
