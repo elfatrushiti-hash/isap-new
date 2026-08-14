@@ -9,3 +9,5 @@
 - [ ] 3.0 AI Presentation Builder
 
 - [x] 2.5 AI Presentation Builder
+
+- [x] 2.9 Rule-based Sales Guidance
