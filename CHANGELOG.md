@@ -122,3 +122,10 @@
 - Added transparent evidence and recommendation paths for every detected signal.
 - Added matching against the existing presentation and asset libraries.
 - Kept all processing local with external transmission explicitly disabled.
+
+## 3.0 - Customer Intelligence Source Foundation
+- Added governed public-source repository per company.
+- Added provenance, trust classification and local Rule Intelligence analysis.
+- Added Public Sources tab to Company Intelligence.
+- Added local persistence for customer source evidence.
+- External AI remains disabled and no source content is transmitted externally.
