@@ -115,3 +115,10 @@
 - Added typed knowledge items and editable relationships.
 - Added graph statistics and orphan detection.
 - Kept external AI hard-disabled and introduced no new outbound data flow.
+
+## 2.9 - Rule-based Sales Guidance
+- Added a deterministic sales-guidance workbench inside Intelligence Core.
+- Rule matches now flow through the knowledge taxonomy into products, discovery questions and content recommendations.
+- Added transparent evidence and recommendation paths for every detected signal.
+- Added matching against the existing presentation and asset libraries.
+- Kept all processing local with external transmission explicitly disabled.
