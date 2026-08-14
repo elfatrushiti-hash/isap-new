@@ -15,6 +15,7 @@ import { createPresentation, updatePresentation, archivePresentation, restorePre
 import { updateSlideInPresentations } from '../services/slideService.js'
 import { defaultKnowledge } from '../data/intelligenceKnowledge.js'
 import { createRecommendationRun } from '../services/recommendationService.js'
+import { analysePublicSource, createPublicSource, deletePublicSource } from '../services/publicSourceService.js'
 
 const IsapStoreContext = createContext(null)
 
@@ -60,6 +61,16 @@ export function IsapStoreProvider({ children }) {
       return []
     }
   })
+
+  const [companySources, setCompanySources] = useState(() => {
+    try {
+      const stored = window.localStorage.getItem('isap-company-sources')
+      return stored ? JSON.parse(stored) : []
+    } catch {
+      return []
+    }
+  })
+
   const [presentations, setPresentations] = useState(() => {
     try {
       const stored = window.localStorage.getItem('isap-presentations')
@@ -88,6 +99,10 @@ export function IsapStoreProvider({ children }) {
   useEffect(() => {
     window.localStorage.setItem('isap-recommendation-history', JSON.stringify(recommendationHistory))
   }, [recommendationHistory])
+
+  useEffect(() => {
+    window.localStorage.setItem('isap-company-sources', JSON.stringify(companySources))
+  }, [companySources])
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -283,6 +298,19 @@ export function IsapStoreProvider({ children }) {
     setRecommendationHistory((current) => [createRecommendationRun(context, results), ...current].slice(0, 50))
   }, [])
 
+
+  const addCompanySource = useCallback((input) => {
+    setCompanySources((current) => [createPublicSource(input, intelligenceKnowledge), ...current])
+  }, [intelligenceKnowledge])
+
+  const deleteCompanySourceById = useCallback((sourceId) => {
+    setCompanySources((current) => deletePublicSource(current, sourceId))
+  }, [])
+
+  const reanalyseCompanySource = useCallback((sourceId) => {
+    setCompanySources((current) => current.map((source) => source.id === sourceId ? analysePublicSource(source, intelligenceKnowledge) : source))
+  }, [intelligenceKnowledge])
+
   const setAdminSection = useCallback((activeSection) => {
     setAdminState((current) => ({ ...current, activeSection }))
   }, [])
@@ -298,8 +326,9 @@ export function IsapStoreProvider({ children }) {
     products, addProduct, editProduct, archiveProductById, restoreProductById, deleteProductById,
     assets, uploadAssets, editAsset, archiveAssetById, restoreAssetById, deleteAssetById, analyseAssetById, editAssetAnalysis,
     presentations, addPresentation, editPresentation, archivePresentationById, restorePresentationById, deletePresentationById, togglePresentationFavoriteById, updatePresentationSlide,
-    recommendationHistory, saveRecommendationRun, intelligenceKnowledge, updateIntelligenceKnowledge
-  }), [meetings, tasks, selectedMeeting, selectedMeetingId, activeMeetings, completedMeetings, archivedMeetings, dashboardFilter, updateMeetingStatus, archiveMeeting, restoreMeeting, addMeeting, createAndStartMeeting, restartIntelligence, completeIntelligenceNow, toggleTask, adminState, setAdminSection, products, addProduct, editProduct, archiveProductById, restoreProductById, deleteProductById, assets, uploadAssets, editAsset, archiveAssetById, restoreAssetById, deleteAssetById, analyseAssetById, editAssetAnalysis, presentations, addPresentation, editPresentation, archivePresentationById, restorePresentationById, deletePresentationById, togglePresentationFavoriteById, updatePresentationSlide, recommendationHistory, saveRecommendationRun, intelligenceKnowledge, updateIntelligenceKnowledge])
+    recommendationHistory, saveRecommendationRun, intelligenceKnowledge, updateIntelligenceKnowledge,
+    companySources, addCompanySource, deleteCompanySourceById, reanalyseCompanySource
+  }), [meetings, tasks, selectedMeeting, selectedMeetingId, activeMeetings, completedMeetings, archivedMeetings, dashboardFilter, updateMeetingStatus, archiveMeeting, restoreMeeting, addMeeting, createAndStartMeeting, restartIntelligence, completeIntelligenceNow, toggleTask, adminState, setAdminSection, products, addProduct, editProduct, archiveProductById, restoreProductById, deleteProductById, assets, uploadAssets, editAsset, archiveAssetById, restoreAssetById, deleteAssetById, analyseAssetById, editAssetAnalysis, presentations, addPresentation, editPresentation, archivePresentationById, restorePresentationById, deletePresentationById, togglePresentationFavoriteById, updatePresentationSlide, recommendationHistory, saveRecommendationRun, intelligenceKnowledge, updateIntelligenceKnowledge, companySources, addCompanySource, deleteCompanySourceById, reanalyseCompanySource])
 
   return <IsapStoreContext.Provider value={value}>{children}</IsapStoreContext.Provider>
 }

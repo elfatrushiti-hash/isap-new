@@ -4,6 +4,7 @@ const tabs = [
   ['financials', 'Financials'],
   ['strategy', 'Strategy'],
   ['news', 'News'],
+  ['sources', 'Public Sources'],
   ['opportunities', 'Opportunities'],
   ['insights', 'AI Insights']
 ]
